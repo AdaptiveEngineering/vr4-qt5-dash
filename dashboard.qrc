@@ -1,0 +1,34 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/DejaVuSans.ttf</file>
+        <file>images/fuel-icon.png</file>
+        <file>images/temperature-icon.png</file>
+        <file>images/dashpreview.png</file>
+        <file>qml/dashboard.qml</file>
+        <file>qml/GaugeSpeedometer.qml</file>
+        <file>qml/StyleSmallGauge.qml</file>
+        <file>qml/GaugeTachometer.qml</file>
+        <file>qml/ValueSource.qml</file>
+        <file>qml/IndicatorTurnSignal.qml</file>
+        <file>qml/IndicatorFrontFog.qml</file>
+        <file>qml/IndicatorTemplate.qml</file>
+        <file>qml/IndicatorHighBeam.qml</file>
+        <file>qml/IndicatorRearFog.qml</file>
+        <file>qml/StyleLargeGauge.qml</file>
+        <file>fonts/VR4.ttf</file>
+        <file>fonts/7seg.otf</file>
+        <file>qml/GaugeFuel.qml</file>
+        <file>qml/GaugeCoolant.qml</file>
+        <file>qml/IndicatorSideLights.qml</file>
+        <file>images/dashpreview2.png</file>
+        <file>images/skid-icon.png</file>
+        <file>images/seatbelt-icon.png</file>
+        <file>images/dooropen-icon.png</file>
+        <file>images/brake-icon.png</file>
+        <file>images/engine-icon.png</file>
+        <file>images/oil-icon.png</file>
+        <file>images/battery-icon.png</file>
+        <file>images/oiltemp-icon.png</file>
+        <file>images/washerbottle-icon.png</file>
+    </qresource>
+</RCC>
