@@ -1,3 +1,53 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the examples of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:BSD$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
+**
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of The Qt Company Ltd nor the names of its
+**     contributors may be used to endorse or promote products derived
+**     from this software without specific prior written permission.
+**
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 import QtQuick 2.2
 import QtQuick.Window 2.1
 import QtQuick.Controls 1.4
@@ -5,15 +55,10 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import QtGraphicalEffects 1.0
 
-Window {
-    id: root
-    visible: true
-    visibility: "FullScreen"
+Item {
+    id: main
     width: Screen.width
     height: Screen.height
-
-    color: "#000000"
-    title: "VR-4 Dash"
 
     ValueSource {
         id: valueSource
@@ -31,6 +76,46 @@ Window {
     property int aycStatus: 0
     property int cruiseStatus: 1
     property bool debugIcons: true
+
+    // property real dash_ECU_ENGINE_SPEED_RPM
+    // property real dash_ECU_MAP_KPA
+    // property real dash_ECU_MGP_KPA
+    // property real dash_ECU_BAROMETRIC_PRESSURE_KPA
+    // property real dash_ECU_THROTTLE_POSITION_PERCENT
+    // property real dash_ECU_INJECTOR_DUTY_CYCLE_PERCENT
+    // property real dash_ECU_SECOND_STAGE_INJECTOR_DUTY_CYCLE_PERCENT
+    // property real dash_ECU_INJECTOR_PULSE_WIDTH_MS
+    // property real dash_ECU_ENGINE_COOLANT_TEMPERATURE_DEGREES_C
+    // property real dash_ECU_INTAKE_AIR_TEMPERATURE_DEGRESS_C
+    // property real dash_ECU_BATTERY_VOLTAGE
+    // property real dash_ECU_MASS_AIR_FLOW_GRAMS_PER_SECOND
+    // property real dash_ECU_GEAR_POSITION
+    // property real dash_ECU_INJECTOR_TIMING_DEGREES
+    // property real dash_ECU_IGNITION_TIMING_DEGREES
+    // property real dash_ECU_CAM_INLET_POSITION_L_DEGREES
+    // property real dash_ECU_CAM_INLET_POSITION_R_DEGREES
+    // property real dash_ECU_CAM_EXHAUST_POSITION_L_DEGREES
+    // property real dash_ECU_CAM_EXHAUST_POSITION_R_DEGREES
+    // property real dash_ECU_LAMBDA_1_LAMBDA
+    // property real dash_ECU_LAMBDA_2_LAMBDA
+    // property real dash_ECU_TRIGGER_1_ERROR_COUNT
+    // property real dash_ECU_FAULT_CODES_COUNT
+    // property real dash_ECU_FUEL_PRESSURE_KPA
+    // property real dash_ECU_OIL_TEMPERATURE_DEGREES_C
+    // property real dash_ECU_OIL_PRESSURE_KPA
+    // property real dash_ECU_LEFT_FRONT_WHEEL_SPEED_KPH
+    // property real dash_ECU_LEFT_REAR_WHEEL_SPEED_KPH
+    // property real dash_ECU_RIGHT_FRONT_WHEEL_SPEED_KPH
+    // property real dash_ECU_RIGHT_REAR_WHEEL_SPEED_KPH
+    // property real dash_ECU_KNOCK_LEVEL_1_COUNT
+    // property real dash_ECU_KNOCK_LEVEL_2_COUNT
+    // property real dash_ECU_KNOCK_LEVEL_3_COUNT
+    // property real dash_ECU_KNOCK_LEVEL_4_COUNT
+    // property real dash_ECU_KNOCK_LEVEL_5_COUNT
+    // property real dash_ECU_KNOCK_LEVEL_6_COUNT
+    // property real dash_ECU_KNOCK_LEVEL_7_COUNT
+    // property real dash_ECU_KNOCK_LEVEL_8_COUNT
+    // property real dash_ECU_LIMIT_FLAGS_BITFIELD
 
     // Delete this section when done
     Rectangle {
@@ -178,7 +263,7 @@ Window {
             maximumValue: 100
 
             style: GaugeFuel {
-                iconColor: fuelLevel <= 8.33 ? "red" : fuelLevel <= 16.67 ? "orange" : "white"
+                iconColor: fuelGauge.value <= 8.33 ? "red" : fuelGauge.value <= 16.67 ? "orange" : "white"
             }
         }
 
@@ -268,6 +353,7 @@ Window {
             anchors.top: topRow.bottom
 
             value: valueSource.kph
+            // Behavior on value { SmoothedAnimation { velocity: 5 } }
             maximumValue: 180
             style: GaugeSpeedometer {}
         }
@@ -375,6 +461,34 @@ Window {
                 anchors.top: parent.top
                 anchors.topMargin: 5
             }
+        }
+
+
+        CircularGauge {
+            id: afrGauge
+
+            width: speedometer.width / 2
+            height: speedometer.height / 3
+            anchors.bottomMargin: 85
+            anchors.horizontalCenter: speedometer.horizontalCenter
+            anchors.bottom: speedometer.bottom
+
+            value: dash_ECU_LAMBDA_1_LAMBDA * 14.7
+            Behavior on value { SmoothedAnimation { velocity: 5 } }
+            minimumValue: 10
+            maximumValue: 16
+
+            style: GaugeAfr {}
+        }
+
+        Text {
+            text: "VR  4"
+            color: "white"
+            font.family: "VR4"
+            font.pixelSize: 30
+            anchors.top: topRow.bottom
+            anchors.topMargin: 30
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Grid {
@@ -570,7 +684,7 @@ Window {
         }
 
         CircularGauge {
-            id: tachometer
+            id: tachometerGauge
 
             width: 675
             height: 675
@@ -579,9 +693,33 @@ Window {
             anchors.left: topRow.right
             anchors.top: topRow.bottom
 
-            value: valueSource.rpm
+            value: dash_ECU_ENGINE_SPEED_RPM / 1000
+            Behavior on value {
+                SmoothedAnimation {
+                    velocity: 10
+                    maximumEasingTime: 1000
+                    duration: 1000
+                }
+            }
             maximumValue: 9
             style: GaugeTachometer {}
+        }
+
+        CircularGauge {
+            id: boostGauge
+
+            width: tachometerGauge.width / 2
+            height: tachometerGauge.height / 3
+            anchors.bottomMargin: 85
+            anchors.horizontalCenter: tachometerGauge.horizontalCenter
+            anchors.bottom: tachometerGauge.bottom
+
+            value: dash_ECU_MGP_KPA / 100
+            Behavior on value { SmoothedAnimation { velocity: 5 } }
+            minimumValue: -0.5
+            maximumValue: 1.5
+
+            style: GaugeBoost {}
         }
 
         CircularGauge {
@@ -591,15 +729,15 @@ Window {
             height: 350
             anchors.leftMargin: 75
             anchors.bottomMargin: 97.5
-            anchors.left: tachometer.right
-            anchors.bottom: tachometer.bottom
-            value: coolantTemperature
+            anchors.left: tachometerGauge.right
+            anchors.bottom: tachometerGauge.bottom
+            value: dash_ECU_ENGINE_COOLANT_TEMPERATURE_DEGREES_C
             Behavior on value { SmoothedAnimation { velocity: 5 } }
             minimumValue: 75
             maximumValue: 125
 
             style: GaugeCoolant {
-                iconColor: coolantTemperature >= 117 ? "red" : coolantTemperature >= 107 ? "orange" : coolantTemperature >= 80 ? "white" : "cyan"
+                iconColor: coolantGauge.value >= 117 ? "red" : coolantGauge.value >= 107 ? "orange" : coolantGauge.value >= 80 ? "white" : "cyan"
             }
         }
 
@@ -871,8 +1009,8 @@ Window {
             id: aycStatusRow
             // height: 58
             spacing: 10
-            anchors.horizontalCenter: tachometer.horizontalCenter
-            anchors.top: tachometer.bottom
+            anchors.horizontalCenter: tachometerGauge.horizontalCenter
+            anchors.top: tachometerGauge.bottom
             anchors.topMargin: -140
 
             Rectangle {

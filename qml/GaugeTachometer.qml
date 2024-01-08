@@ -2,7 +2,7 @@ import QtQuick 2.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 
-StyleLargeGauge {
+StyleMainGauge {
     id: tachometer
     tickmarkStepSize: 0.5
     minorTickmarkCount: 4
@@ -44,7 +44,7 @@ StyleLargeGauge {
                 font.pixelSize: tachometer.toPixels(0.2)
                 font.family: "Segment7"
                 font.italic: true
-                text: valueSource.rpm.toFixed(1)
+                text: tachometerGauge.value.toFixed(1)
                 color: "#ccccbb"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top

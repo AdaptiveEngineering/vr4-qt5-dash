@@ -6,7 +6,7 @@
         <file>images/dashpreview.png</file>
         <file>qml/dashboard.qml</file>
         <file>qml/GaugeSpeedometer.qml</file>
-        <file>qml/StyleSmallGauge.qml</file>
+        <file>qml/StyleSideGauge.qml</file>
         <file>qml/GaugeTachometer.qml</file>
         <file>qml/ValueSource.qml</file>
         <file>qml/IndicatorTurnSignal.qml</file>
@@ -14,7 +14,7 @@
         <file>qml/IndicatorTemplate.qml</file>
         <file>qml/IndicatorHighBeam.qml</file>
         <file>qml/IndicatorRearFog.qml</file>
-        <file>qml/StyleLargeGauge.qml</file>
+        <file>qml/StyleMainGauge.qml</file>
         <file>fonts/VR4.ttf</file>
         <file>fonts/7seg.otf</file>
         <file>qml/GaugeFuel.qml</file>
@@ -30,5 +30,9 @@
         <file>images/battery-icon.png</file>
         <file>images/oiltemp-icon.png</file>
         <file>images/washerbottle-icon.png</file>
+        <file>qml/GaugeBoost.qml</file>
+        <file>qml/GaugeAfr.qml</file>
+        <file>qml/StyleInsetGauge.qml</file>
+        <file>qml/main.qml</file>
     </qresource>
 </RCC>

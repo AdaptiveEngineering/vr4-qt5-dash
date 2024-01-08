@@ -3,7 +3,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import QtGraphicalEffects 1.0
 
-StyleSmallGauge {
+StyleSideGauge {
     id: fuelGauge
 
     tickmarkLabel: null

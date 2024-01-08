@@ -1,17 +1,15 @@
 [Unit]
 Description=Start dashboard
-After=weston.service
-Requires=weston.service
+DefaultDependencies=no
 
 [Service]
 Type=simple
 User=root
 PAMName=login
-Environment=WAYLAND_DISPLAY=/run/wayland-0
-Environment=QT_QPA_PLATFORM=wayland-egl
+Environment=QT_QPA_PLATFORM=linuxfb
 ExecStart=/usr/share/dashboard/dashboard --fullscreen
 Restart=always
 
 [Install]
-WantedBy=graphical.target
+WantedBy=sysinit.target
 
