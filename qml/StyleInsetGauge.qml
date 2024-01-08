@@ -3,8 +3,8 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 
 CircularGaugeStyle {
-    minimumValueAngle: -122.5
-    maximumValueAngle: 122.5
+    minimumValueAngle: -90
+    maximumValueAngle: 90
     tickmarkInset: toPixels(0.01)
     minorTickmarkInset: toPixels(0.05)
     labelInset: toPixels(0.25)
@@ -67,7 +67,7 @@ CircularGaugeStyle {
         font.weight: Font.Black
         style: Text.Outline
         styleColor: "#222"
-        text: styleData.value + "  "
+        text: styleData.value
         color: "white"
         antialiasing: true
     }

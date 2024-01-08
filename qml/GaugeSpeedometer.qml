@@ -2,7 +2,7 @@ import QtQuick 2.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 
-StyleLargeGauge {
+StyleMainGauge {
     id: speedometer
     labelStepSize: 20
 
@@ -61,17 +61,6 @@ StyleLargeGauge {
             font.bold: true
             anchors.top: parent.top
             anchors.topMargin: 195
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-        Text {
-            text: "VR  4"
-            color: "white"
-            font.family: "VR4"
-            font.pixelSize: toPixels(0.09)
-            // font.italic: true
-            // font.bold: true
-            anchors.top: parent.verticalCenter
-            anchors.topMargin: 130
             anchors.horizontalCenter: parent.horizontalCenter
         }
     }
