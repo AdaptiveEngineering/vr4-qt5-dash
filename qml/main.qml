@@ -58,31 +58,26 @@ Window {
         Rectangle {
             anchors.fill: parent
             color: "#000000"
+            visible: loader.opacity != 1
         }
-        Text {
-            text: "VR  4"
-            color: "red"
-            font.family: "VR4"
-            font.pixelSize: 320
+        Image {
+            source: "qrc:/images/vr4-digital-dash-preload.png"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
+            visible: loader.opacity != 1
         }
     }
 
     Loader {
         id: loader
-        active: false
-        asynchronous: true
+        active: true
         anchors.fill: parent
-        visible: status == Loader.Ready
-        onLoaded: splash.visible = false
+        opacity: 0
+        NumberAnimation on opacity {
+            from: 0
+            to: 1
+            duration: 1000
+        }
         source: "qrc:/qml/dashboard.qml"
-    }
-
-    Timer {
-        id: loaderTimer
-        interval: 1000
-        running: true
-        onTriggered: { loader.active = true }
     }
 }

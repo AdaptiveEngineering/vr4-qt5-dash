@@ -287,7 +287,7 @@ int main(int argc, char *argv[])
     }
 
     // Initialise canbus
-    // if (auto retCode = startCan()) { return retCode; }
+    if (auto retCode = startCan()) { return retCode; }
 
     // Start QML engine
     std::signal(SIGINT,  signalHandler);

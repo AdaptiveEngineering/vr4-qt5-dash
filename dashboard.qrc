@@ -3,7 +3,6 @@
         <file>fonts/DejaVuSans.ttf</file>
         <file>images/fuel-icon.png</file>
         <file>images/temperature-icon.png</file>
-        <file>images/dashpreview.png</file>
         <file>qml/dashboard.qml</file>
         <file>qml/GaugeSpeedometer.qml</file>
         <file>qml/StyleSideGauge.qml</file>
@@ -20,7 +19,6 @@
         <file>qml/GaugeFuel.qml</file>
         <file>qml/GaugeCoolant.qml</file>
         <file>qml/IndicatorSideLights.qml</file>
-        <file>images/dashpreview2.png</file>
         <file>images/skid-icon.png</file>
         <file>images/seatbelt-icon.png</file>
         <file>images/dooropen-icon.png</file>
@@ -34,5 +32,6 @@
         <file>qml/GaugeAfr.qml</file>
         <file>qml/StyleInsetGauge.qml</file>
         <file>qml/main.qml</file>
+        <file>images/vr4-digital-dash-preload.png</file>
     </qresource>
 </RCC>
