@@ -4,27 +4,32 @@
 #include <QtGlobal>
 #include <QtSerialBus>
 #include <QDebug>
-#include <QTimer>
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
+#include <QFontDatabase>
+
+#include <QTimer>
 #include <QQmlContext>
 #include <QFont>
-#include <QFontDatabase>
 #include <QImageReader>
 #include <qqml.h>
 #include <QObject>
 // #include <QQuickView>
 #include <QQmlEngine>
-#include <QQmlPropertyMap>
 #include <QProcess>
 
 #include <csignal>
 
+#include "config.h"
+#include "global.h"
 #include "link_generic_dash.h"
+#include "gpio.h"
+#include "processor.h"
 
-#define CAN_DEVICE "can0"
-#define CAN_BAUD 1000000
+// Keep no matter what
+#include <QQmlPropertyMap>
+QQmlPropertyMap dummy;
 
 #endif // MAIN_H

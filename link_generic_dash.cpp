@@ -1,5 +1,10 @@
 #include "link_generic_dash.h"
 
+// #include <Arduino.h>
+// #include "localisation.h"
+#include <QtGlobal>
+#include <cstring>
+
 // Dash parameters in the format "Friendly Name|Units of measurement|Decimal Places|Too Low Value|Good Value|Warning Value|Critical Value"
 const char *GenericDashParameterNames[] = {
     "Engine Speed|RPM|0|0|600|6000|7000|8000",
@@ -63,6 +68,135 @@ const char *GenericDashLimitFlagsNames[] = {
     "Cyclic Idle Active| |0|0|0|1|2",
 };
 
+// Link ECU Fault Codes - Must be kept in lockstep with enum LinkECUFaultCodes
+const char *LinkECUFaultCodeStrings[] {
+	"No Fault",
+	"RPM limit reached",
+	"MAP limit reached",
+	"Ethanol Sensor Fault",
+	"Consult Link Dealership",
+	"Consult Link Dealership",
+	"Consult Link Dealership",
+	"Consult Link Dealership",
+	"Consult Link Dealership",
+	"Consult Link Dealership",
+	"An Volt 1 above Error High Value",
+	"An Volt 1 below Error Low Value",
+	"An Volt 1 Signal Error",
+	"An Volt 2 above Error High Value",
+	"An Volt 2 below Error Low Value",
+	"An Volt 2 Signal Error",
+	"An Volt 3 above Error High Value",
+	"An Volt 3 below Error Low Value",
+	"An Volt 3 Signal Error",
+	"An Volt 4 above Error High Value",
+	"An Volt 4 below Error Low Value",
+	"An Volt 4 Signal Error",
+	"An Volt 5 above Error High Value",
+	"An Volt 5 below Error Low Value",
+	"An Volt 5 Signal Error",
+	"An Volt 6 above Error High Value",
+	"An Volt 6 below Error Low Value",
+	"An Volt 6 Signal Error",
+	"An Volt 7 above Error High Value",
+	"An Volt 7 below Error Low Value",
+	"An Volt 7 Signal Error",
+	"An Volt 8 above Error High Value",
+	"An Volt 8 below Error Low Value",
+	"An Volt 8 Signal Error",
+	"An Volt 9 above Error High Value",
+	"An Volt 9 below Error Low Value",
+	"An Volt 9 Signal Error",
+	"An Volt 10 above Error High Value",
+	"An Volt 10 below Error Low Value",
+	"An Volt 10 Signal Error",
+	"An Volt 11 above Error High Value",
+	"An Volt 11 below Error Low Value",
+	"An Volt 11 Signal Error",
+	"An Temperature 1 above Error High Value",
+	"An Temperature 1 below Error Low Value",
+	"An Temperature 1 Signal Error",
+	"An Temperature 2 above Error High Value",
+	"An Temperature 2 below Error Low Value",
+	"An Tempperature 2 Signal Error",
+	"An Temperature 3 above Error High Value",
+	"An Temperature 3 below Error Low Value",
+	"An Temperature 3 Signal Error",
+	"An Temperature 4 above Error High Value",
+	"An Temperature 4 below Error Low Value",
+	"An Temperature 4 Signal Error",
+	"Consult Link Dealership",
+	"MAP Above Fault Code Value",
+	"MAP Signal Error",
+	"See Link Manual",
+	"See Link Manual",
+	"See Link Manual",
+	"See Link Manual",
+	"ECT Above Fault Code Value",
+	"ECT Signal Error",
+	"See Link Manual",
+	"See Link Manual",
+	"See Link Manual",
+	"See Link Manual",
+	"Consult Link Dealership",
+	"E-Throttle 1 Max %DC Limit",
+	"E-Throttle 1 Min %DC Limit",
+	"Aux 9/10 Supply Error - E-Throttle",
+	"Analog 5V Supply Error - E-Throttle (E-Throttle Sensor Supply Voltage)",
+	"Aux 9/10 Supply Error - E-Throttle",
+	"Analog 5V Supply Error",
+	"E-Throttle 1 TPS /Target Error",
+	"TPS(main) /TPS(sub) tracking Error",
+	"APS(main) /APS(sub) tracking Error",
+	"TPS(Main) Fault - E-Throttle.",
+	"TPS(Sub) Fault - E-Throttle",
+	"TPS(Main) Above Fault Code Value",
+	"TPS(Sub) Above Fault Code Value",
+	"TPS(Main) Not Selected",
+	"TPS(Sub) Not Selected",
+	"Aux9/10 E-Throttle IC Over Temperature / Under Voltage",
+	"APS(Main) Fault - E-Throttle.",
+	"APS(Sub) Fault - E-Throttle",
+	"See Link Manual",
+	"APS(Sub) Above Fault Code Value",
+	"APS(Main) Not Selected",
+	"APS(Sub) Not Selected",
+	"Consult Link Dealership",
+	"APS CAN Signal Lost",
+	"E-Throttle 2 Max %DC Limit",
+	"E-Throttle 2 Min %DC Limit",
+	"E-Throttle 2 TPS 2 /Target Error",
+	"TPS 2 (Main) Fault - E-Throttle 2",
+	"TPS 2 (Sub) Fault - E-Throttle 2",
+	"TPS 2 (Main) / TPS 2 (Sub) tracking Error",
+	"Aux 17-20 Supply Error",
+	"Aux 17-20 Supply Error - E-Throttle",
+	"An Volt 12 above Error High Value",
+	"An Volt 12 below Error Low Value",
+	"An Volt 12 Signal Error",
+	"An Volt 13 above Error High Value",
+	"An Volt 13 below Error Low Value",
+	"An Volt 13 Signal Error",
+	"An Volt 14 above Error High Value",
+	"An Volt 14 below Error Low Value",
+	"An Volt 14 Signal Error",
+	"An Volt 15 above Error High Value",
+	"An Volt 15 below Error Low Value",
+	"An Volt 15 Signal Error",
+	"An Volt 16 above Error High Value",
+	"An Volt 16 below Error Low Value",
+	"An Volt 16 Signal Error",
+	"Analog 5V Supply Error - E-Throttle 2 (E-Throttle 2 Sensor Supply Voltage)",
+	"Aux 17-20 E-Throttle IC Over Temperature / Under Voltage",
+	"DI Fuel Pump Control Low Pressure Fault",
+	"DI Fuel Pump Control High Pressure Fault",
+	"Ethrottle Control Error",
+	"Ethrottle No Relay Selected",
+	"Maximum Injector Duty Cycle Reached",
+	"DI Driver Fault"
+};
+
+const char LinkECUFaultCodeUnknownErrorString[] = "Consult Link Dealership";
 
 float getGenericDashValue(volatile unsigned char dataList[GenericDashFrames][GenericDashBytes], GenericDashParameters param) {
     switch (param) {
@@ -192,4 +326,12 @@ float getGenericDashValue(volatile unsigned char dataList[GenericDashFrames][Gen
 bool getGenericDashLimitFlag(volatile unsigned char dataList[GenericDashFrames][GenericDashBytes], GenericDashLimitFlags param) {
     quint16 flags = (quint16)getGenericDashValue(dataList, ECU_LIMIT_FLAGS_BITFIELD);
     return (bool)((flags >> (int)param) & 0x1);
+}
+
+QString getLinkECUFaultCode(LinkECUFaultCodes param) {
+	if ((param < 0) || (param >= Link_ECU_Fault_Code_Count)) {
+        return QString(LinkECUFaultCodeUnknownErrorString);
+	} else {
+        return QString(LinkECUFaultCodeStrings[param]);
+	}
 }

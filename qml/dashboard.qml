@@ -1,53 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2016 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
 import QtQuick 2.2
 import QtQuick.Window 2.1
 import QtQuick.Controls 1.4
@@ -56,91 +6,42 @@ import QtQuick.Extras 1.4
 import QtGraphicalEffects 1.0
 
 Item {
-    id: main
+    id: dashboard
     width: Screen.width
     height: Screen.height
 
-    ValueSource {
-        id: valueSource
-    }
-
-    property bool backgroundEnabled: false
-    property int tripMode: 1
-    property real odoReading: 0
-    property real fuelLevel: 100
-    property real coolantTemperature: 95
-    property bool flashing: false
-    property bool ayc3Bars: false
-    property bool ayc2Bars: true
-    property bool ayc1Bars: true
-    property int aycStatus: 0
-    property int cruiseStatus: 1
-    property bool debugIcons: true
-
-    // Delete this section when done
-    // Rectangle {
-    //     id: backgroundImage
-    //     anchors.centerIn: parent
-    //     width: 1920
-    //     height: 720
-    //     color: "red"
-    //     opacity: 0.5
-    //     z: -1
-    //     visible: backgroundEnabled
-
-    //     Image {
-    //         source: "qrc:/images/dashpreview2.png"
-    //         anchors.horizontalCenter: parent.horizontalCenter
-    //     }
-    // }
-
-    Timer {
-        id: fastTimer
-        interval: 500
-        running: true
-        repeat: true
-        onTriggered: {
-            flashing = !flashing
-            odoReading += valueSource.kph * (0.000277778 / 2)
-            fuelLevel -= ((valueSource.gear === "P" ? 0 : valueSource.gear) * valueSource.rpm) * 0.01
-            if (fuelLevel <= 0) { fuelLevel = 100 }
-
-            aycStatus += (Math.random() * 2).toFixed(0) - 1
-            if (aycStatus > 3) { aycStatus = 3; }
-            if (aycStatus < 0) { aycStatus = 0; }
-            ayc3Bars = (aycStatus >= 3) ? true : false
-            ayc2Bars = (aycStatus >= 2) ? true : false
-            ayc1Bars = (aycStatus >= 1) ? true : false
-        }
-    }
-    Timer {
-        id: slowTimer
-        interval: 10000
-        running: true
-        repeat: true
-        onTriggered: {
-            coolantTemperature = valueSource.temperature + ((Math.random() * 50) - 25)
-            debugIcons = false
-        }
-    }
-    // End delete this section
-
     Item {
         id: container
-        // anchors.fill: parent
         anchors.centerIn: parent
         width: 1920
         height: 720
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                if (mouse.button == Qt.LeftButton) {
-                    debugIcons = true
-                }
-                if (mouse.button == Qt.RightButton) {
-                    backgroundEnabled = !backgroundEnabled
-                }
+        Item {
+            id: errorLogContainer
+            anchors.centerIn: parent
+            width: parent.width
+            height: parent.height
+            z: 10
+
+            Rectangle {
+                id: errorLogBackground
+                anchors.centerIn: parent
+                width: parent.width
+                height: parent.height
+                color: "darkred"
+                opacity: dash_ECU_FAULT_CODE_MESSAGES != "" ? 0.667 : 0.0
+            }
+
+            Text {
+                id: errorLogText
+                anchors.centerIn: parent
+                color: "white"
+                style: Text.Outline
+                styleColor: "black"
+                font.pixelSize: 64
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+                text: dash_ECU_FAULT_CODE_MESSAGES
             }
         }
 
@@ -926,7 +827,7 @@ Item {
                 id: engineIndicator
                 width: 58
                 height: this.width
-                opacity: debugIcons ? 1.0 : 0.0
+                opacity: dash_ECU_FAULT_CODES_COUNT > 0 ? 1.0 : 0.0
 
                 Image {
                     id: engineIcon

@@ -1,62 +1,46 @@
-/****************************************************************************
-**
-** Copyright (C) 2016 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
 #include "main.h"
 
 QGuiApplication *app;
 QQmlApplicationEngine *engine;
 QObject *dash;
-QQmlPropertyMap dummy; // Oddly this needs to be kept
+
 unsigned char GenericDash[GenericDashFrames][GenericDashBytes];
 QCanBusDevice *canDevice;
 QCanBusFrame canFrame;
+
+GpioPollerThread *gpioPoller;
+ProcessingThread *processor;
+
+QString errorMessages;
+unsigned long FaultCodes[Link_ECU_Fault_Code_Count - 1];
+int currentFaultCode;
+unsigned long uptimeMillis;
+
+// Process Error Messages
+void processErrorMessages() {
+    uptimeMillis = millis();
+    errorMessages = "";
+    currentFaultCode = (int)getGenericDashValue(GenericDash, ECU_FAULT_CODES_COUNT);
+
+    if (dash->property("debugIcons").toBool()) {
+        FaultCodes[currentFaultCode] = uptimeMillis + (1000 * 60 * 30); // Mute alert for 30 minutes
+    } else {
+        FaultCodes[currentFaultCode] = uptimeMillis;
+    }
+
+    for (int i = 1; i < Link_ECU_Fault_Code_Count - 1; i++) {
+        if (currentFaultCode == 0) {
+            FaultCodes[i] = 0;
+        } else if (
+            (FaultCodes[i] > 0) &&
+            (uptimeMillis - FaultCodes[i] < FAULT_CODE_TIMEOUT)
+        ) {
+            errorMessages += "\nFault Code " + QString::number(i) + ": " + getLinkECUFaultCode((LinkECUFaultCodes)i);
+        }
+    }
+
+    dash->setProperty("dash_ECU_FAULT_CODE_MESSAGES", errorMessages.trimmed());
+}
 
 // Process CAN frames
 void processFrames() {
@@ -151,6 +135,9 @@ void processFrames() {
             }
         }
     }
+
+    // Process any error messages
+    processErrorMessages();
 }
 
 void processErrors(QCanBusDevice::CanBusError error)
@@ -261,8 +248,19 @@ int stopCan() {
 void signalHandler(int signal)
 {
     std::signal(signal, SIG_DFL);
-    qDebug() << "Signal" << signal << "received, quitting application";
+    qDebug() << "Signal" << signal << "received, quitting application...";
+    qDebug() << "Stopping CAN...";
     stopCan();
+    qDebug() << "Stopping GPIO poller...";
+    gpioPoller->enabled(false);
+    gpioPoller->exit();
+    gpioPoller->wait(2000);
+    gpioPoller->terminate();
+    qDebug() << "Stopping processor...";
+    processor->exit();
+    processor->wait(2000);
+    processor->terminate();
+    qDebug() << "Quitting dashboard...";
     app->quit();
 }
 
@@ -286,8 +284,19 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    // Initialise GPIO
+    gpioPoller = new GpioPollerThread();
+    gpioPoller->start();
+    gpioPoller->setPropertyContainer(dash);
+    gpioPoller->enabled(true);
+
+    // Initialise processor
+    processor = new ProcessingThread();
+    processor->setGpioPollerThread(gpioPoller);
+    processor->start();
+
     // Initialise canbus
-    if (auto retCode = startCan()) { return retCode; }
+    // if (auto canRetCode = startCan()) { return canRetCode; }
 
     // Start QML engine
     std::signal(SIGINT,  signalHandler);
